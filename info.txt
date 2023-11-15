@@ -1,0 +1,74 @@
+Problemas
+- Esse cache num ta funcionando, pode ser que seja problema no service worker
+
+Criando projeto
+- ng new nome_projeto
+
+Transformando projeto em PWA
+- primeiro acessamos a pasta do projeto
+- ng add @angular/pwa@13
+
+IndexedDB
+- usamos a lib dexie.db para manipular esse banco de dados 
+- npm install dexie
+
+ServiceWorker
+- Roda em background no navegador e ele é responsável pela sincronização online e offline
+- doc https://angular.io/guide/service-worker-config
+
+manifest.webmanifest
+- arquivo de personalização da pwa
+
+Aplicação rodando como PWA
+- ng build --prod
+- vai ser criada uma pasta dist
+- para entrar no dist/pwangular
+- npx serve
+
+ngsw-config.json
+- O primeiro objeto de assetGroups -> cacheia toda a aplicação
+- O segundo objeto cacheia os arquivos da pasta assets
+
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
+      }
+    }
+  ], "dataGroups": [
+    {
+      "name": "car-api",
+      "urls": [
+        "https://www.carqueryapi.com/api/0.3"
+      ],
+      "cacheConfig": {
+        "strategy": "performance", //para API de dados não mudam a toda hora
+        "maxSize": 10000, // tamanho máximo que o service worker vai cachear
+        "maxAge": "10h", // depois de 10h o cache não vale
+        "timeout": "5s", // se em 5 segundo nao conseguir api, pegamos os dados cacheados
+      }
+    }
+  ]
+}
